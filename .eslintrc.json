@@ -1,0 +1,10 @@
+{
+  "extends": "eslint-config-suitable-for-everything",
+  "rules" : {
+    "no-use-before-define": "off",
+    "no-invalid-this": "off",
+    "no-mixed-requires": "off",
+    "indent": [  "warn", 4 ],
+    "quotes" : [2, "single", "avoid-escape"]
+  }
+}

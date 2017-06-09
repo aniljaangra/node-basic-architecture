@@ -1,17 +1,19 @@
-const User = require('../model/user-schema');
-const Controller = require('../controller/base-controller');
+/**
+ * Created by Anil Jangra on 31/5/17
+ */
+const BaseController = require('./base-controller'),
+    userModel = require('../model/user');
+
+//======================================= Implementation =========================================
 
 
-class UserController extends Controller{
+class UserController extends BaseController {
 
-  constructor(Model){
-    super(Model);
-  }
-
-  profile(req,res){
-    this.Model.findOne().then(res.send.bind(res));
-  }
-
+    constructor(Model) {
+        super(Model);
+    }
 }
 
-module.exports = new UserController(User);
+//======================================= Exports ================================================
+
+module.exports = new UserController(userModel);

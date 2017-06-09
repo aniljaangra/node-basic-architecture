@@ -1,39 +1,88 @@
-class Controller{
-
-  constructor(Model){
-    this.Model = Model;
-    _bindAll(this);
-  }
-
-  create( req, res){
-    this.Model.create(req.body).then( data => res.send(data));
-  }
-
-  find( req, res){
-    this.Model.find().then( data => res.send(data));
-  }
-
-}
-
-module.exports = Controller;
-
 /**
- * Binds All Methods with object so that they can work as an route handler
- * @param object
- * @private
+ * Created by Anil Jangra on 31/5/17
  */
-function _bindAll(object) {
-  //fetch subclass property list
-  var objectMembers = Object.getOwnPropertyNames(object.constructor.prototype);
-  //fetch base class property list
-  var baseClassMembers = Object.getOwnPropertyNames(Object.getPrototypeOf(object.constructor).prototype);
-  //ignore constructor
-  var propList =  objectMembers.concat(baseClassMembers);
-  //bind every function
-  propList.forEach( function (property) {
-    //ignore constructor
-    if(property !== "constructor" && object.__proto__[property] && typeof object.__proto__[property] === "function"){
-      object.__proto__[property] = object[property].bind(object);
+const API_DEF = require('../constants/api-definition');
+
+//======================================= Implementation =========================================
+
+class BaseController {
+
+    constructor(Model) {
+        this.Model = Model;
     }
-  })
+
+    get find() {
+        return {
+            definition: API_DEF.COMMON.FIND(this.Model),
+
+            async handler(req, res) {
+                const collection = await this.Model.find(req.query).exec();
+                res.status(200).json(collection);
+            }
+        };
+    }
+
+/*
+    findOne() {
+        return {
+            definition: API_DEF.USER.FIND_ONE,
+
+            async handler(req, res) {
+                const doc = await this.Model.findOne(req.query);
+                res.status(200).json(doc);
+            }
+        };
+    }
+
+    findById() {
+        return {
+            definition: API_DEF.USER.FIND_BY_ID,
+
+            async handler(req, res) {
+                const doc = await this.Model.findById(req.params.id);
+                if (!doc) { return res.status(404).end(); }
+                return res.status(200).json(doc);
+            }
+        };
+    }
+*/
+
+    get create() {
+        return {
+            definition: API_DEF.COMMON.PUT_POST(this.Model),
+
+            async handler(req, res) {
+                const doc = await this.Model.create(req.body);
+                return res.status(201).json(doc);
+            }
+        };
+    }
+
+    get update() {
+        return {
+            definition: API_DEF.COMMON.PUT_POST(this.Model),
+
+            async handler(req, res) {
+                const conditions = { _id: req.params.id };
+                const doc = await this.Model.update(conditions, req.body, { new: true });
+                if (!doc) { return res.status(404).end(); }
+                return res.status(200).json(doc);
+            }
+        };
+    }
+
+    get remove() {
+        return {
+            definition: API_DEF.COMMON.REMOVE(this.Model),
+
+            async handler(req, res) {
+                const doc = await this.Model.remove(req.params.id);
+                if (!doc) { return res.status(404).end(); }
+                return res.status(204).end();
+            }
+        };
+    }
 }
+//======================================= Exports ================================================
+
+module.exports = BaseController;

@@ -1,12 +1,17 @@
-const Router   = require('express').Router;
-const router   = new Router();
-const _        = require('lodash');
-const UserCtrl = require('../controller/user-controller');
+
+const router = require('express').Router(),
+    addPathToSwagger = require('../swagger').addPath,
+    userController = require('../controller/user-controller');
 
 
 router
-  .post('/create' , UserCtrl.create )
-  .get('/find' , UserCtrl.find)
-  .get('/profile' , UserCtrl.profile)
+  .post('/', __(userController.create))
+  .get('/', __(userController.find))
+  .delete('/', __(userController.remove));
 
 module.exports = router;
+
+function __(route) {
+    addPathToSwagger(route.definition);
+    return route.handler.bind(userController);
+}

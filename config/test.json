@@ -1,0 +1,8 @@
+{
+  "isTest" : true,
+  "mongodb": {
+    "host" : "localhost",
+    "port" : 27017,
+    "db" : "umt_test"
+  }
+}
